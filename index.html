@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorama - Memory Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        .card.flipped img {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-board" id="gameBoard"></div>
+    <script>
+        const images = [
+            'image1.png', 'image1.png',
+            'image2.png', 'image2.png',
+            'image3.png', 'image3.png',
+            'image4.png', 'image4.png'
+        ];
+        
+        let firstCard = null;
+        let secondCard = null;
+
+        function createBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+
+            // Shuffle and create cards
+            images.sort(() => 0.5 - Math.random()).forEach(image => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.image = image;
+
+                const img = document.createElement('img');
+                img.src = image;
+                card.appendChild(img);
+
+                card.addEventListener('click', flipCard);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (this === firstCard || this.classList.contains('flipped')) return;
+
+            this.classList.add('flipped');
+            if (!firstCard) {
+                firstCard = this;
+            } else {
+                secondCard = this;
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const isMatch = firstCard.dataset.image === secondCard.dataset.image;
+
+            isMatch ? resetCards() : setTimeout(unflipCards, 1500);
+        }
+
+        function unflipCards() {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetCards();
+        }
+
+        function resetCards() {
+            [firstCard, secondCard] = [null, null];
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
